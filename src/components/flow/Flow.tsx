@@ -6,17 +6,19 @@ import { ReactFlowProvider } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import SidebarItem from './SidebarItem'
 import { FlowComponent } from './FlowComponent'
+import { NodeLabel, NodeType } from '../../enums/flow'
 
 export function Flow (): JSX.Element {
   const [open, setOpen] = useState(false)
 
   return (
     <>
+
       <CssBaseline />
       <Box sx={{ display: 'flex', width: '100%', height: '100%' }}>
         <TemporaryDrawer open={open} setOpen={setOpen}>
-          <SidebarItem type='sourceNode' label='Source' />
-          <SidebarItem type='layerNode' label='Layer' />
+          <SidebarItem type={NodeType.SOURCE} label={NodeLabel.SOURCE} />
+          <SidebarItem type={NodeType.LAYER} label={NodeLabel.LAYER} />
         </TemporaryDrawer>
         <Box
           component='main'

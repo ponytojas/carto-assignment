@@ -78,7 +78,7 @@ export const useFlow = (screenToFlowPosition): useFlowReturn => {
         id: `${type}_${nodes.length}`,
         type,
         position,
-        data: { label }
+        data: { label, url: '' }
       }
 
       setNodes((nds) => nds.concat(newNode))
@@ -87,7 +87,16 @@ export const useFlow = (screenToFlowPosition): useFlowReturn => {
   )
 
   const saveFlow = useCallback(() => {
-    const flowState = { nodes, edges }
+    const flowState = {
+      nodes: nodes.map(node => ({
+        ...node,
+        data: {
+          ...node.data,
+          url: node?.data?.url ?? ''
+        }
+      })),
+      edges
+    }
     localStorage.setItem('flowState', JSON.stringify(flowState))
     toast.success('State saved successfully')
   }, [nodes, edges])

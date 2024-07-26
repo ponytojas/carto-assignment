@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import { useReactFlow, Background, Controls, ReactFlow } from '@xyflow/react'
-import { Button, Box, ButtonGroup } from '@mui/material'
+import { Button, Box, ButtonGroup, Tooltip } from '@mui/material'
 import { useFlow } from '../../hooks/useFlow'
 import InputNode from './nodes/InputNode'
 import OutputNode from './nodes/OutputNode'
@@ -41,23 +41,27 @@ export function FlowComponent (): JSX.Element {
     >
       <Box sx={{ position: 'absolute', bottom: 20, right: 10, zIndex: 100, display: 'flex' }}>
         <ButtonGroup variant='outlined' size='small' color='secondary' aria-label='Basic button group'>
-          <Button onClick={saveFlow}>
-            <SaveOutlined fontSize='small' sx={{ marginRight: 2 }} />
-            Save
-          </Button>
-          <Button onClick={loadFlow}>
-            <FileUpload fontSize='small' sx={{ marginRight: 2 }} />
-            Load
-          </Button>
+          <Tooltip arrow title='Save current flow'>
+            <Button onClick={saveFlow}>
+              <SaveOutlined fontSize='small' sx={{ marginBottom: '1px', marginRight: 1 }} />
+              Save
+            </Button>
+          </Tooltip>
+          <Tooltip arrow title='Load saved flow'>
+            <Button onClick={loadFlow}>
+              <FileUpload fontSize='small' sx={{ marginRight: 1 }} />
+              Load
+            </Button>
+          </Tooltip>
         </ButtonGroup>
-
       </Box>
       <ReactFlow
         nodes={nodes.map(node => ({
           ...node,
           data: {
             ...node.data,
-            onDeleteNode
+            onDeleteNode,
+            url: node?.data?.url || ''
           }
         }))}
         edges={edges.map(edge => ({

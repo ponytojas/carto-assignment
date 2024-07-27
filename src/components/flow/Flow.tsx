@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Box, CssBaseline, IconButton } from '@mui/material'
+import React, { useState, useEffect } from 'react'
+import { Box, Button, CssBaseline, IconButton, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import TemporaryDrawer from '../common/Drawer'
 import { ReactFlowProvider } from '@xyflow/react'
@@ -7,13 +7,28 @@ import '@xyflow/react/dist/style.css'
 import SidebarItem from './SidebarItem'
 import { FlowComponent } from './FlowComponent'
 import { NodeLabel, NodeType } from '../../enums/flow'
+import { useNavigate } from 'react-router-dom'
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
+import useStore from '../../utils/store'
 
 export function Flow (): JSX.Element {
   const [open, setOpen] = useState(false)
+  const navigateTo = useNavigate()
+  const { saveFlowState, loadFlowState, setNodes, setEdges, nodes, edges } = useStore()
+
+  const handleNavigate = (): void => {
+    saveFlowState(nodes, edges)
+    navigateTo('/map')
+  }
+
+  useEffect(() => {
+    const { nodes: savedNodes, edges: savedEdges } = loadFlowState()
+    setNodes(savedNodes)
+    setEdges(savedEdges)
+  }, [loadFlowState, setNodes, setEdges])
 
   return (
     <>
-
       <CssBaseline />
       <Box sx={{ display: 'flex', width: '100%', height: '100%' }}>
         <TemporaryDrawer open={open} setOpen={setOpen}>
@@ -36,6 +51,13 @@ export function Flow (): JSX.Element {
               </IconButton>
             </Box>
           )}
+
+          <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 100 }}>
+            <Button variant='contained' onClick={handleNavigate}>
+              <Typography variant='body2'>Map</Typography>
+              <ArrowForwardIosIcon fontSize='small' sx={{ marginLeft: 1 }} />
+            </Button>
+          </Box>
           <ReactFlowProvider>
             <FlowComponent />
           </ReactFlowProvider>

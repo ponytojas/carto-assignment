@@ -19,7 +19,7 @@ const OutputNode = ({ id, data }): JSX.Element => {
           onMouseEnter={() => setIconHovered(true)}
           onMouseLeave={() => setIconHovered(false)}
           size='small'
-          onClick={() => onDeleteNode(id)}
+          onClick={() => onDeleteNode([{ id, data }])}
           style={{ position: 'absolute', top: -25, right: 0 }}
         >
           <DeleteIcon

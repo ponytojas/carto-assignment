@@ -29,7 +29,8 @@ export function FlowComponent (): JSX.Element {
     onDeleteNode,
     onDeleteEdge,
     saveFlow,
-    loadFlow
+    loadFlow,
+    onNodeDragStop
   } = useFlow(screenToFlowPosition)
 
   return (
@@ -71,10 +72,13 @@ export function FlowComponent (): JSX.Element {
           }
         }))}
         onNodesChange={onNodesChange}
+        onNodesDelete={onDeleteNode}
         onEdgesChange={onEdgesChange}
+        onEdgesDelete={onDeleteEdge}
         nodeTypes={nodeTypes}
         onConnect={onConnect}
         onReconnect={onReconnect}
+        onNodeDragStop={onNodeDragStop}
         fitView
       >
         <Background />

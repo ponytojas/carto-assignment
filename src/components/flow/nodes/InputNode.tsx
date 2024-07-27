@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, memo, useRef } from 'react'
+import { bbox, centroid, polygon } from '@turf/turf'
 import { Handle, Position, useReactFlow } from '@xyflow/react'
 import { Typography, IconButton, TextField } from '@mui/material'
 import { BaseNode } from './BaseNode'
@@ -10,6 +11,7 @@ const InputNode = ({ id, data }): JSX.Element => {
   const { updateNodeData } = useReactFlow()
   const storeData = useStore((state) => state.storeData)
   const setStoreData = useStore((state) => state.setStoreData)
+  const setViewPoint = useStore((state) => state.setViewPoint)
 
   const { label, onDeleteNode } = data
   const [hovered, setHovered] = useState(false)
@@ -25,7 +27,7 @@ const InputNode = ({ id, data }): JSX.Element => {
     }
   }, [data])
 
-  const handleFetchGeoJSON = async (inputUrl: string): void => {
+  const handleFetchGeoJSON = useCallback(async (inputUrl: string): Promise<void> => {
     if (inputUrl === null || inputUrl === undefined || inputUrl === '' || loading.current) return
     loading.current = true
 
@@ -37,21 +39,28 @@ const InputNode = ({ id, data }): JSX.Element => {
       const geojson = await response.json()
       setStoreData([...storeData, { id, geojson }])
       toast.success('GeoJSON fetched successfully')
+
+      const _bbox = bbox(geojson)
+      const _polygon = polygon([[[_bbox[0], _bbox[1]], [_bbox[2], _bbox[1]], [_bbox[2], _bbox[3]], [_bbox[0], _bbox[3]], [_bbox[0], _bbox[1]]]])
+      const _centroid = centroid(_polygon)
+      const viewpoint = { longitude: _centroid.geometry.coordinates[0], latitude: _centroid.geometry.coordinates[1], zoom: 12 }
+      setViewPoint(viewpoint)
     } catch (error) {
       console.error('Failed to fetch GeoJSON:', error)
       toast.error('Failed to fetch GeoJSON')
+    } finally {
+      loading.current = false
     }
-    loading.current = false
-  }
+  }, [id, storeData, setStoreData, setViewPoint])
 
   const handleBlur = useCallback((event) => {
     const inputUrl = event?.target?.value ?? null
-    if (inputUrl === undefined || inputUrl === null || inputUrl === url) return
+    if (inputUrl === undefined || inputUrl === null) return
 
     setUrl(inputUrl)
     handleFetchGeoJSON(inputUrl)
-    if (inputUrl !== url)updateNodeData(id, { url: inputUrl })
-  }, [id, updateNodeData, url])
+    updateNodeData(id, { url: inputUrl })
+  }, [id, updateNodeData, url, handleFetchGeoJSON])
 
   return (
     <BaseNode
@@ -63,7 +72,7 @@ const InputNode = ({ id, data }): JSX.Element => {
           onMouseEnter={() => setIconHovered(true)}
           onMouseLeave={() => setIconHovered(false)}
           size='small'
-          onClick={() => onDeleteNode(id)}
+          onClick={() => onDeleteNode([{ id, data }])}
           style={{ position: 'absolute', top: -25, right: 0 }}
         >
           <DeleteIcon

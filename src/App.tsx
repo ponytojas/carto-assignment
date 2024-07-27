@@ -1,8 +1,8 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Flow } from './components/flow/Flow'
-import { Map } from './pages/map/Map'
 import { Toaster } from 'sonner'
+import { Map } from './components/map/Map'
 
 function App (): JSX.Element {
   return (

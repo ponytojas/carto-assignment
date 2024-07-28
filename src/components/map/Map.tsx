@@ -23,16 +23,24 @@ export function Map (): JSX.Element {
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN
   const mapStyle = import.meta.env.VITE_MAP_THEME ?? 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json'
   const mapRef = useRef(null)
+
+  const { tooltipInfo, tooltipPosition, showTooltip } = useTooltip()
+
+  const navigateTo = useNavigate()
+
+  const onHover = useCallback((info) => {
+    showTooltip(info)
+  }, [showTooltip])
+
   const mapConfig = {
     mapboxToken,
     mapRef,
     mapStyle
   }
 
-  const navigateTo = useNavigate()
-
   const deckGlConfig = {
-    initialViewState: { ...viewPoint }
+    initialViewState: { ...viewPoint },
+    onHover
   }
 
   const handleNavigate = (): void => {
@@ -77,18 +85,14 @@ export function Map (): JSX.Element {
     <>
       <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 100 }}>
         <Button variant='contained' onClick={handleNavigate}>
-          <Typography variant='body2'>Flow</Typography>
+          <Typography variant='body2'>Back</Typography>
           <ArrowForwardIosIcon fontSize='small' sx={{ marginLeft: 1 }} />
         </Button>
       </Box>
-      <Box sx={{
-        cursor: 'pointer',
-        position: 'relative',
-        width: '100%',
-        height
-      }}
-      >
-        <MapWrapper mapConfig={mapConfig} deckGlConfig={deckGlConfig} />
+      <Box sx={{ cursor: 'pointer', position: 'relative', width: '100%', height }}>
+        <MapWrapper mapConfig={mapConfig} deckGlConfig={deckGlConfig} layers={layers}>
+          <CustomTooltip content={tooltipInfo} position={tooltipPosition} />
+        </MapWrapper>
       </Box>
     </>
   )

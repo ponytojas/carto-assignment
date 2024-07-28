@@ -7,7 +7,6 @@ export const DEFAULT_GEOJSON_LAYER_PROPS = {
   lineWidthMinPixels: 2,
   getLineColor: [160, 160, 180],
   getFillColor: [200, 200, 220, 140],
-  getRadius: 100,
   getPointRadius: 100,
   getLineWidth: 1,
   getElevation: 30

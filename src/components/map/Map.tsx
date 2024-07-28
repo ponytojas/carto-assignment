@@ -11,7 +11,7 @@ import useTooltip from '../../hooks/useTooltip'
 import { CustomTooltip } from './utils/CustomTooltip'
 
 export function Map (): JSX.Element {
-  const viewPoint = useStore((state) => state.viewPoint) ?? { longitude: -122.4194, latitude: 37.7749, zoom: 12 }
+  const viewPoint = useStore((state) => state.viewPoint) ?? { longitude: -73.9853, latitude: 40.7466, zoom: 12 }
   const storeData = useStore((state) => state.storeData)
   const nodes = useStore((state) => state.nodes)
   const edges = useStore((state) => state.edges)

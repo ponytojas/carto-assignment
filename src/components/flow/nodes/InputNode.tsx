@@ -51,7 +51,7 @@ const InputNode = ({ id, data }): JSX.Element => {
       const viewpoint = { longitude: _centroid.geometry.coordinates[0], latitude: _centroid.geometry.coordinates[1], zoom: 12 }
       setViewPoint(viewpoint)
     } catch (error) {
-      console.error('Failed to fetch GeoJSON:', error)
+      if (import.meta.env.MODE === 'development') console.error('Failed to fetch GeoJSON:', error)
       toast.error('Failed to fetch GeoJSON')
     } finally {
       loading.current = false

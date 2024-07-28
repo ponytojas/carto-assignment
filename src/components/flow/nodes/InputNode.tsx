@@ -23,7 +23,6 @@ const InputNode = ({ id, data }): JSX.Element => {
 
   useEffect(() => {
     if (isFirstRender === false) return
-    console.debug('InputNode mounted:', id)
     const { url: initialUrl } = data
     if (initialUrl !== undefined && initialUrl !== null) {
       setUrl(initialUrl)

@@ -13,7 +13,7 @@ interface FlowState {
   setStoreData: (newData: GeoJson[]) => void
   saveFlowState: (nodes: Node[], edges: Edge[]) => void
   loadFlowState: () => { nodes: Node[], edges: Edge[] }
-  setViewPoint: (viewPoint: GeoJson) => void
+  setViewPoint: (viewPoint: viewPoint) => void
 }
 
 const useStore = create<FlowState>((set) => ({

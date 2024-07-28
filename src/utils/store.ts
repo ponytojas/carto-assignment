@@ -10,7 +10,7 @@ interface FlowState {
   viewPoint: viewPoint
   setNodes: (nodes: Node[]) => void
   setEdges: (edges: Edge[]) => void
-  setStoreData: (newData: GeoJson[]) => void
+  setStoreData: (newData: Record<string, FeatureCollection>) => void
   saveFlowState: (nodes: Node[], edges: Edge[]) => void
   loadFlowState: () => { nodes: Node[], edges: Edge[] }
   setViewPoint: (viewPoint: viewPoint) => void
@@ -23,7 +23,9 @@ const useStore = create<FlowState>((set) => ({
   viewPoint: null,
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),
-  setStoreData: (newData) => set({ storeData: newData }),
+  setStoreData: (newData) => set((state) => ({
+    storeData: { ...state.storeData, ...newData }
+  })),
   saveFlowState: (nodes, edges) => set({ nodes, edges }),
   setViewPoint: (viewPoint) => set({ viewPoint }),
   loadFlowState: () => {

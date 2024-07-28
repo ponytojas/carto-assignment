@@ -42,7 +42,7 @@ const InputNode = ({ id, data }): JSX.Element => {
       }
       const geojson = await response.json()
 
-      setStoreData({ ...storeData, [id]: { data: geojson } })
+      setStoreData({ [id]: { data: geojson } })
       toast.success('GeoJSON fetched successfully')
 
       const _bbox = bbox(geojson)
@@ -56,7 +56,7 @@ const InputNode = ({ id, data }): JSX.Element => {
     } finally {
       loading.current = false
     }
-  }, [id, storeData, setStoreData, setViewPoint])
+  }, [id, setStoreData, setViewPoint])
 
   const handleBlur = useCallback((event) => {
     const inputUrl = event?.target?.value ?? null

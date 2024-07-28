@@ -6,7 +6,7 @@ import { viewPoint } from '../components/map/types'
 interface FlowState {
   nodes: Node[]
   edges: Edge[]
-  storeData: FeatureCollection[]
+  storeData: Record<string, FeatureCollection>
   viewPoint: viewPoint
   setNodes: (nodes: Node[]) => void
   setEdges: (edges: Edge[]) => void
@@ -19,7 +19,7 @@ interface FlowState {
 const useStore = create<FlowState>((set) => ({
   nodes: [],
   edges: [],
-  storeData: [],
+  storeData: {},
   viewPoint: null,
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),

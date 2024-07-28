@@ -6,26 +6,31 @@ import { BaseNode } from './BaseNode'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { toast } from 'sonner'
 import useStore from '../../../utils/store'
+import { useIsFirstRender } from '../../../hooks/useIsFirstRender'
 
 const InputNode = ({ id, data }): JSX.Element => {
   const { updateNodeData } = useReactFlow()
+  const isFirstRender = useIsFirstRender()
   const storeData = useStore((state) => state.storeData)
   const setStoreData = useStore((state) => state.setStoreData)
   const setViewPoint = useStore((state) => state.setViewPoint)
 
-  const { label, onDeleteNode } = data
+  const { label, onDeleteNode, url: dataUrl = '' } = data
   const [hovered, setHovered] = useState(false)
   const [iconHovered, setIconHovered] = useState(false)
-  const [url, setUrl] = useState('')
+  const [url, setUrl] = useState(dataUrl)
   const loading = useRef(false)
 
   useEffect(() => {
+    if (isFirstRender === false) return
+    console.debug('InputNode mounted:', id)
     const { url: initialUrl } = data
-    if (initialUrl !== undefined && initialUrl !== null && initialUrl !== url) {
+    if (initialUrl !== undefined && initialUrl !== null) {
       setUrl(initialUrl)
-      handleFetchGeoJSON(initialUrl)
+      void handleFetchGeoJSON(initialUrl)
     }
-  }, [data])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFirstRender])
 
   const handleFetchGeoJSON = useCallback(async (inputUrl: string): Promise<void> => {
     if (inputUrl === null || inputUrl === undefined || inputUrl === '' || loading.current) return
@@ -37,7 +42,8 @@ const InputNode = ({ id, data }): JSX.Element => {
         throw new Error('Network response was not ok')
       }
       const geojson = await response.json()
-      setStoreData([...storeData, { id, geojson }])
+
+      setStoreData({ ...storeData, [id]: { data: geojson } })
       toast.success('GeoJSON fetched successfully')
 
       const _bbox = bbox(geojson)
@@ -58,9 +64,9 @@ const InputNode = ({ id, data }): JSX.Element => {
     if (inputUrl === undefined || inputUrl === null) return
 
     setUrl(inputUrl)
-    handleFetchGeoJSON(inputUrl)
+    void handleFetchGeoJSON(inputUrl)
     updateNodeData(id, { url: inputUrl })
-  }, [id, updateNodeData, url, handleFetchGeoJSON])
+  }, [id, updateNodeData, handleFetchGeoJSON])
 
   return (
     <BaseNode

@@ -1,10 +1,14 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { MapWrapper } from './MapWrapper'
 import { Box, Button, Typography } from '@mui/material'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import { useNavigate } from 'react-router-dom'
 import useStore from '../../utils/store'
 import { NodeType } from '../../enums/flow'
+import { GeoJsonLayer } from 'deck.gl'
+import { DEFAULT_GEOJSON_LAYER_PROPS } from './utils'
+import useTooltip from '../../hooks/useTooltip'
+import { CustomTooltip } from './utils/CustomTooltip'
 
 export function Map (): JSX.Element {
   const viewPoint = useStore((state) => state.viewPoint) ?? { longitude: -122.4194, latitude: 37.7749, zoom: 12 }
@@ -12,8 +16,8 @@ export function Map (): JSX.Element {
   const nodes = useStore((state) => state.nodes)
   const edges = useStore((state) => state.edges)
 
-  const [layersNode, setLayersNode] = React.useState([])
-  const [layers, setLayers] = React.useState([])
+  const [layersNode, setLayersNode] = useState([])
+  const [layers, setLayers] = useState([])
 
   const height = window.innerHeight
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN
@@ -36,19 +40,38 @@ export function Map (): JSX.Element {
   }
 
   useEffect(() => {
-    if (nodes === undefined || nodes === null) return
-    const _layersNodes = nodes.filter(node => node.type === NodeType.LAYER).sort((a, b) => b.position.y - a.position.y)
+    if (nodes === null || nodes === undefined) return
+
+    const _layersNodes = nodes
+      .filter((node) => node.type === NodeType.LAYER)
+      .sort((a, b) => b.position.y - a.position.y)
+
     setLayersNode(_layersNodes)
   }, [nodes])
 
   useEffect(() => {
-    if (layersNode === undefined || layersNode === null || layersNode.length === 0) return
-    // Filter nodes that has no edges
-    const _layersNodes = layersNode.filter((node) => edges.some(edge => edge.target === node.id))
-    for (const edge of edges) {
-      console.log(edge)
-    }
-  }, [layersNode])
+    if (layersNode.length === 0) return
+
+    const _filteredLayerNodesID = layersNode
+      .filter((node) => edges.some((edge) => edge.target === node.id))
+      .map((node) => node.id)
+
+    const layerSourceTuples = _filteredLayerNodesID.map((layerId) => {
+      const sourceNodeId = edges.find((edge) => edge.target === layerId)?.source
+      return { layer: layerId, source: sourceNodeId }
+    })
+
+    const _layers = layerSourceTuples.map((tuple) => {
+      const { data } = storeData[tuple.source]
+      return new GeoJsonLayer({
+        ...DEFAULT_GEOJSON_LAYER_PROPS,
+        id: tuple.layer,
+        data
+      })
+    })
+
+    setLayers(_layers)
+  }, [layersNode, edges, storeData])
 
   return (
     <>

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import useStore from '../../utils/store'
 import { NodeType } from '../../enums/flow'
 import { GeoJsonLayer } from 'deck.gl'
-import { DEFAULT_GEOJSON_LAYER_PROPS } from './utils'
+import { DEFAULT_GEOJSON_LAYER_PROPS, handleViewStateChange } from './utils'
 import useTooltip from '../../hooks/useTooltip'
 import { CustomTooltip } from './utils/CustomTooltip'
 
@@ -40,7 +40,8 @@ export function Map (): JSX.Element {
 
   const deckGlConfig = {
     initialViewState: { ...viewPoint },
-    onHover
+    onHover,
+    onViewStateChange: (info) => handleViewStateChange(info)
   }
 
   const handleNavigate = (): void => {

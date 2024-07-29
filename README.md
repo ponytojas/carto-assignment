@@ -44,6 +44,8 @@ And the e2e tests can be run with:
 npm run test:e2e
 ```
 
+Notice that to run the e2e tests, the project must be running.
+
 The main test should be considered the e2e tests, as they test the main functionalities of the app.
 
 ## Map wrapper

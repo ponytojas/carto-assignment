@@ -1,3 +1,9 @@
+import useStore from '../../../utils/store'
+
+const {
+  setViewPoint
+} = useStore.getState()
+
 export const DEFAULT_GEOJSON_LAYER_PROPS = {
   pickable: true,
   stroked: true,
@@ -11,3 +17,18 @@ export const DEFAULT_GEOJSON_LAYER_PROPS = {
   getLineWidth: 1,
   getElevation: 30
 }
+
+const debounce = (fn, time) => {
+  let timeout
+
+  return function (...args) {
+    const functionCall = () => fn.apply(this, args)
+
+    clearTimeout(timeout)
+    timeout = setTimeout(functionCall, time)
+  }
+}
+
+export const handleViewStateChange = debounce(({ viewState }) => {
+  setViewPoint(viewState)
+}, 10)

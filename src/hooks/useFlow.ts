@@ -22,7 +22,12 @@ interface useFlowReturn {
 }
 
 export const useFlow = (screenToFlowPosition): useFlowReturn => {
-  const { nodes: initialNodes, edges: initialEdges, setNodes, setEdges, saveFlowState, loadFlowState } = useStore()
+  const initialNodes = useStore((state) => state.nodes)
+  const initialEdges = useStore((state) => state.edges)
+  const setNodes = useStore((state) => state.setNodes)
+  const setEdges = useStore((state) => state.setEdges)
+  const saveFlowState = useStore((state) => state.saveFlowState)
+  const loadFlowState = useStore((state) => state.loadFlowState)
   const [nodes, setNodesState, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdgesState, onEdgesChange] = useEdgesState(initialEdges)
 
@@ -48,7 +53,7 @@ export const useFlow = (screenToFlowPosition): useFlowReturn => {
         return
       }
 
-      setEdgesState((eds) => addEdge(params, eds))
+      setEdgesState((eds) => addEdge({ ...params, key: `edge-${params.source}-${params.target}`, id: `edge-${params.source}-${params.target}` }, eds))
       const _edges = [...edges, params]
       setEdges(_edges)
     },
@@ -65,9 +70,11 @@ export const useFlow = (screenToFlowPosition): useFlowReturn => {
         return edges
       }
 
-      return setEdgesState((els) => reconnectEdge(oldEdge, newConnection, els))
+      const _edges = setEdgesState((els) => reconnectEdge(oldEdge, newConnection, els))
+      setEdges(_edges)
+      return _edges
     },
-    [edges, setEdgesState]
+    [edges, setEdgesState, setEdges]
   )
 
   const onDeleteNode = useCallback(
@@ -110,14 +117,16 @@ export const useFlow = (screenToFlowPosition): useFlowReturn => {
 
       const newNode = {
         id: `${type}_${nodes.length}`,
+        key: `${type}_${nodes.length}`,
         type,
         position,
         data: { label, url: '' }
       }
 
       setNodesState((nds) => nds.concat(newNode))
+      setNodes([...nodes, newNode])
     },
-    [nodes, setNodesState, screenToFlowPosition]
+    [nodes, setNodesState, setNodes, screenToFlowPosition]
   )
 
   const onNodeDragStop = useCallback(

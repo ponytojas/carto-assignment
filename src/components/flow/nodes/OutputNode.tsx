@@ -4,7 +4,15 @@ import { BaseNode } from './BaseNode'
 import { IconButton, Typography } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
 
-const OutputNode = ({ id, data }): JSX.Element => {
+interface OutputNodeProps {
+  id: string
+  data: {
+    label: string
+    onDeleteNode: (node: Node) => void
+  }
+}
+
+const OutputNode = ({ id, data }: OutputNodeProps): JSX.Element => {
   const { label, onDeleteNode } = data
   const [hovered, setHovered] = useState(false)
   const [iconHovered, setIconHovered] = useState(false)

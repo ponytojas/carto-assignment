@@ -8,7 +8,16 @@ import { toast } from 'sonner'
 import useStore from '../../../utils/store'
 import { useIsFirstRender } from '../../../hooks/useIsFirstRender'
 
-const InputNode = ({ id, data }): JSX.Element => {
+interface InputNodeProps {
+  id: string
+  data: {
+    label: string
+    onDeleteNode: (node: Node) => void
+    url?: string
+  }
+}
+
+const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
   const { updateNodeData } = useReactFlow()
   const isFirstRender = useIsFirstRender()
   const storeData = useStore((state) => state.storeData)

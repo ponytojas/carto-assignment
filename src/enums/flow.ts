@@ -2,16 +2,16 @@ import InputNode from '../components/flow/nodes/InputNode'
 import IntersectionNode from '../components/flow/nodes/IntersectionNode'
 import OutputNode from '../components/flow/nodes/OutputNode'
 
-export enum NodeType {
-  SOURCE = 'sourceNode',
-  LAYER = 'layerNode'
-  INTERSECTION = 'intersectionNode'
+export const NodeType = {
+  SOURCE: 'sourceNode',
+  LAYER: 'layerNode',
+  INTERSECTION: 'intersectionNode'
 }
 
-export enum NodeLabel {
-  SOURCE = 'Source',
-  LAYER = 'Layer'
-  INTERSECTION = 'Intersection'
+export const NodeLabel = {
+  SOURCE: 'Source',
+  LAYER: 'Layer',
+  INTERSECTION: 'Intersection'
 }
 
 export const NodeComponent = {

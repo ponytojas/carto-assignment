@@ -3,17 +3,18 @@ import React from 'react'
 import {
   Box,
   Paper,
-  Typography
+  Typography,
+  TypographyOwnProps
 } from '@mui/material'
 
 interface TooltipProps {
-  content: string
+  content: string | null
   position: { x: number, y: number }
 }
 
-const parseText = (text): JSX.Element[] => text.split('\n').filter(Boolean).map((line, index) => {
+const parseText = (text: string): JSX.Element[] => text.split('\n').filter(Boolean).map((line: string, index: number) => {
   const _key = Symbol(line).toString()
-  const typographyProps = {
+  const typographyProps: Partial<TypographyOwnProps> = {
     variant: 'body1',
     sx: {
       fontWeight: index === 0 ? 400 : 100,
@@ -39,7 +40,7 @@ const DEFAULT_STYLE = {
   boxShadow: '0 1px 20px rgba(0,0,0,0.22)'
 }
 
-export const CustomTooltip = ({ content, position }: TooltipProps): JSX.Element => {
+export const CustomTooltip = ({ content, position }: TooltipProps): JSX.Element | null => {
   if (content === null || content === undefined) return null
   const parsedContent = parseText(content)
 

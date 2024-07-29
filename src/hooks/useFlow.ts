@@ -1,19 +1,19 @@
 import { useCallback, useEffect } from 'react'
-import { useNodesState, useEdgesState, addEdge, reconnectEdge, Connection, Edge, Node } from '@xyflow/react'
+import { useNodesState, useEdgesState, addEdge, reconnectEdge, Connection, Edge, Node, OnNodesChange, OnEdgesChange, XYPosition } from '@xyflow/react'
 import { toast } from 'sonner'
-import useStore from '../utils/store'
+import useStore, { FlowState } from '../utils/store'
 
 interface useFlowReturn {
   nodes: Node[]
   edges: Edge[]
-  onNodesChange: (changes: Node[]) => void
-  onEdgesChange: (changes: Edge[]) => void
+  onNodesChange: OnNodesChange<Node>
+  onEdgesChange: OnEdgesChange<Edge>
   onDrop: (event: React.DragEvent<HTMLDivElement>) => void
   onDragOver: (event: React.DragEvent<HTMLDivElement>) => void
   onConnect: (params: Edge | Connection) => void
   onReconnect: (oldEdge: Edge, newConnection: Connection) => void
-  onDeleteNode: (nodeId: string) => void
-  onDeleteEdge: (edgeId: string) => void
+  onDeleteNode: (nodes: Node[]) => void
+  onDeleteEdge: (edges: Edge[]) => void
   saveFlowToStore: () => void
   loadFlowFromStore: () => void
   saveFlow: () => void
@@ -21,13 +21,13 @@ interface useFlowReturn {
   onNodeDragStop: (event: React.MouseEvent, node: Node) => void
 }
 
-export const useFlow = (screenToFlowPosition): useFlowReturn => {
-  const initialNodes = useStore((state) => state.nodes)
-  const initialEdges = useStore((state) => state.edges)
-  const setNodes = useStore((state) => state.setNodes)
-  const setEdges = useStore((state) => state.setEdges)
-  const saveFlowState = useStore((state) => state.saveFlowState)
-  const loadFlowState = useStore((state) => state.loadFlowState)
+export const useFlow = (screenToFlowPosition: (clientPosition: XYPosition, options?: { snapToGrid: boolean }) => XYPosition): useFlowReturn => {
+  const initialNodes = useStore((state: FlowState) => state.nodes)
+  const initialEdges = useStore((state: FlowState) => state.edges)
+  const setNodes = useStore((state: FlowState) => state.setNodes)
+  const setEdges = useStore((state: FlowState) => state.setEdges)
+  const saveFlowState = useStore((state: FlowState) => state.saveFlowState)
+  const loadFlowState = useStore((state: FlowState) => state.loadFlowState)
   const [nodes, setNodesState, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdgesState, onEdgesChange] = useEdgesState(initialEdges)
 
@@ -53,7 +53,7 @@ export const useFlow = (screenToFlowPosition): useFlowReturn => {
         return
       }
 
-      setEdgesState((eds) => addEdge({ ...params, key: `edge-${params.source}-${params.target}`, id: `edge-${params.source}-${params.target}` }, eds))
+      setEdgesState((eds) => addEdge({ ...params, id: `edge-${params.source}-${params.target}` }, eds))
       const _edges = [...edges, params]
       setEdges(_edges)
     },
@@ -117,7 +117,6 @@ export const useFlow = (screenToFlowPosition): useFlowReturn => {
 
       const newNode = {
         id: `${type}_${nodes.length}`,
-        key: `${type}_${nodes.length}`,
         type,
         position,
         data: { label, url: '' }
@@ -130,7 +129,8 @@ export const useFlow = (screenToFlowPosition): useFlowReturn => {
   )
 
   const onNodeDragStop = useCallback(
-    (event, node) => {
+    // @ts-expect-error Mouse event is not assignable to MouseEvent<Element, MouseEvent>
+    (event: MouseEvent<Element, MouseEvent>, node: Node): void => {
       const _nodes = nodes.map((n) => (n.id === node.id ? { ...n, position: node.position } : n))
       setNodesState((nds) =>
         nds.map((n) => (n.id === node.id ? { ...n, position: node.position } : n))

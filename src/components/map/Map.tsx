@@ -3,21 +3,23 @@ import { MapWrapper } from './MapWrapper'
 import { Box, Button, Typography } from '@mui/material'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import { useNavigate } from 'react-router-dom'
-import useStore from '../../utils/store'
+import useStore, { FlowState } from '../../utils/store'
 import { NodeType } from '../../enums/flow'
 import { GeoJsonLayer } from 'deck.gl'
+import type { Layer, MapViewState, PickingInfo } from '@deck.gl/core'
 import { DEFAULT_GEOJSON_LAYER_PROPS, handleViewStateChange } from './utils'
 import useTooltip from '../../hooks/useTooltip'
 import { CustomTooltip } from './utils/CustomTooltip'
+import { Edge, Node } from '@xyflow/react'
 
 export function Map (): JSX.Element {
-  const viewPoint = useStore((state) => state.viewPoint) ?? { longitude: -73.9853, latitude: 40.7466, zoom: 12 }
-  const storeData = useStore((state) => state.storeData)
-  const nodes = useStore((state) => state.nodes)
-  const edges = useStore((state) => state.edges)
+  const viewPoint = useStore((state: FlowState) => state.viewPoint) ?? { longitude: -73.9853, latitude: 40.7466, zoom: 12 }
+  const storeData = useStore((state: FlowState) => state.storeData)
+  const nodes: Node[] = useStore((state: FlowState) => state.nodes)
+  const edges: Edge[] = useStore((state: FlowState) => state.edges)
 
-  const [layersNode, setLayersNode] = useState([])
-  const [layers, setLayers] = useState([])
+  const [layersNode, setLayersNode] = useState<Node[]>([])
+  const [layers, setLayers] = useState<Layer[]>([])
 
   const height = window.innerHeight
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN
@@ -28,7 +30,7 @@ export function Map (): JSX.Element {
 
   const navigateTo = useNavigate()
 
-  const onHover = useCallback((info) => {
+  const onHover = useCallback((info: PickingInfo) => {
     showTooltip(info)
   }, [showTooltip])
 
@@ -41,7 +43,7 @@ export function Map (): JSX.Element {
   const deckGlConfig = {
     initialViewState: { ...viewPoint },
     onHover,
-    onViewStateChange: (info) => handleViewStateChange(info)
+    onViewStateChange: (info: MapViewState) => handleViewStateChange(info)
   }
 
   const handleNavigate = (): void => {
@@ -70,8 +72,9 @@ export function Map (): JSX.Element {
       return { layer: layerId, source: sourceNodeId }
     })
 
-    const _layers = layerSourceTuples.map((tuple) => {
+    const _layers: Layer[] = layerSourceTuples.map((tuple) => {
       const _keys = Object.keys(storeData)
+      if (tuple.source === null || tuple.source === undefined) return null
       if (_keys.length === 0 || !_keys.includes(tuple.source)) return null
       const { data } = storeData[tuple.source]
       return new GeoJsonLayer({
@@ -79,9 +82,9 @@ export function Map (): JSX.Element {
         id: tuple.layer,
         data
       })
-    })
-
-    setLayers(_layers)
+    }).filter(l => l !== null)
+    if (_layers !== null || _layers !== undefined) setLayers(_layers)
+    else setLayers([])
   }, [layersNode, edges, storeData])
 
   return (

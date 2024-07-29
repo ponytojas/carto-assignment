@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 
-export function useIsFirstRender (): React.MutableRefObject<boolean> {
+export function useIsFirstRender (): boolean {
   const renderRef = useRef(true)
 
   if (renderRef.current) {

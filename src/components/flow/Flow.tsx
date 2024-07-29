@@ -9,17 +9,17 @@ import { FlowComponent } from './FlowComponent'
 import { NodeLabel, NodeType } from '../../enums/flow'
 import { useNavigate } from 'react-router-dom'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
-import useStore from '../../utils/store'
+import useStore, { FlowState } from '../../utils/store'
 
 export function Flow (): JSX.Element {
   const [open, setOpen] = useState(false)
   const navigateTo = useNavigate()
-  const saveFlowState = useStore((state) => state.saveFlowState)
-  const loadFlowState = useStore((state) => state.loadFlowState)
-  const setNodes = useStore((state) => state.setNodes)
-  const setEdges = useStore((state) => state.setEdges)
-  const nodes = useStore((state) => state.nodes)
-  const edges = useStore((state) => state.edges)
+  const saveFlowState = useStore((state: FlowState) => state.saveFlowState)
+  const loadFlowState = useStore((state: FlowState) => state.loadFlowState)
+  const setNodes = useStore((state: FlowState) => state.setNodes)
+  const setEdges = useStore((state: FlowState) => state.setEdges)
+  const nodes = useStore((state: FlowState) => state.nodes)
+  const edges = useStore((state: FlowState) => state.edges)
 
   const handleNavigate = useCallback(() => {
     saveFlowState(nodes, edges)

@@ -6,7 +6,7 @@ interface SidebarItemProps {
   label: string
 }
 
-export default function SidebarItem ({ type, label }): React.FC<SidebarItemProps> {
+export default function SidebarItem ({ type, label }: SidebarItemProps): JSX.Element {
   const handleDragStart = (event: React.DragEvent<HTMLDivElement>): void => {
     event.dataTransfer.setData('application/reactflow', JSON.stringify({ type, label }))
     event.dataTransfer.effectAllowed = 'move'
@@ -28,7 +28,7 @@ export default function SidebarItem ({ type, label }): React.FC<SidebarItemProps
         marginRight: 10,
         cursor: 'move'
       }}
-      data-testid={`sidebar-item-${type as string}`}
+      data-testid={`sidebar-item-${type }`}
     >
       <Typography>{label}</Typography>
     </Box>

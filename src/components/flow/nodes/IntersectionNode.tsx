@@ -1,28 +1,28 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { bbox, centroid, polygon, intersect, featureCollection } from '@turf/turf'
-import { Handle, Position, useReactFlow } from '@xyflow/react'
+import { Edge, Handle, Node, Position, useReactFlow, XYPosition } from '@xyflow/react'
 import { Typography, IconButton } from '@mui/material'
 import { BaseNode } from './BaseNode'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { toast } from 'sonner'
-import useStore from '../../../utils/store'
+import useStore, { FlowState } from '../../../utils/store'
 import { extractPolygons, isPolygonOrFeatureOfPolygons } from './utils'
 
 interface IntersectionNodeProps {
   id: string
   data: {
     label: string
-    onDeleteNode: (node: Node) => void
+    onDeleteNode: (nodes: Node[]) => void
   }
 }
 
 const IntersectionNode = ({ id, data }: IntersectionNodeProps): JSX.Element => {
   const { updateNodeData } = useReactFlow()
-  const edges = useStore((state) => state.edges)
-  const storeData = useStore((state) => state.storeData)
-  const setStoreData = useStore((state) => state.setStoreData)
-  const setViewPoint = useStore((state) => state.setViewPoint)
-  const removeStoreData = useStore((state) => state.removeStoreData)
+  const edges = useStore((state: FlowState) => state.edges)
+  const storeData = useStore((state: FlowState) => state.storeData)
+  const setStoreData = useStore((state: FlowState) => state.setStoreData)
+  const setViewPoint = useStore((state: FlowState) => state.setViewPoint)
+  const removeStoreData = useStore((state: FlowState) => state.removeStoreData)
 
   const { label, onDeleteNode } = data
   const [hovered, setHovered] = useState(false)
@@ -37,8 +37,9 @@ const IntersectionNode = ({ id, data }: IntersectionNodeProps): JSX.Element => {
 
     for (const p1 of polygons1) {
       for (const p2 of polygons2) {
-        const feat = featureCollection([polygon([...p1.coordinates], p1.properties), polygon([...p2.coordinates], p2.properties)])
-        const _intersection = intersect(feat, { properties: { ...p1.properties, ...p2.properties } })
+        const _properties = { ...p1.properties, ...p2.properties }
+        const feat = featureCollection([polygon([...p1.coordinates]), polygon([...p2.coordinates])])
+        const _intersection = intersect(feat, { properties: { ..._properties } })
         if (_intersection != null) {
           intersection.push(_intersection)
         }
@@ -98,8 +99,8 @@ const IntersectionNode = ({ id, data }: IntersectionNodeProps): JSX.Element => {
   }, [inputsId, setViewPoint, updateNodeData, storeData, updateStoreData, id])
 
   useEffect(() => {
-    const input1 = edges.find(e => e.target === id && e.targetHandle === `${id}-input-1`)?.source
-    const input2 = edges.find(e => e.target === id && e.targetHandle === `${id}-input-2`)?.source
+    const input1 = edges.find((e: Edge) => e.target === id && e.targetHandle === `${id}-input-1`)?.source
+    const input2 = edges.find((e: Edge) => e.target === id && e.targetHandle === `${id}-input-2`)?.source
     const inputs = [input1, input2].filter(Boolean) // Filter out undefined values
     if (inputs.length === 2 && JSON.stringify(inputs) !== JSON.stringify(inputsId)) {
       setInputsId(inputs)
@@ -118,6 +119,7 @@ const IntersectionNode = ({ id, data }: IntersectionNodeProps): JSX.Element => {
           onMouseEnter={() => setIconHovered(true)}
           onMouseLeave={() => setIconHovered(false)}
           size='small'
+          // @ts-expect-error The onDeleteNode expects a Node[] but for some reason it's not being recognized
           onClick={() => onDeleteNode([{ id, data }])}
           sx={{ position: 'absolute', top: -25, right: 0 }}
         >

@@ -1,10 +1,18 @@
+
+import type { MapViewState } from '@deck.gl/core'
+import type { GeoJsonLayerProps } from '@deck.gl/layers'
+
 import useStore from '../../../utils/store'
+
+interface HandleViewStateChange {
+  viewState: MapViewState
+}
 
 const {
   setViewPoint
 } = useStore.getState()
 
-export const DEFAULT_GEOJSON_LAYER_PROPS = {
+export const DEFAULT_GEOJSON_LAYER_PROPS: Partial<GeoJsonLayerProps> = {
   pickable: true,
   stroked: true,
   filled: true,
@@ -18,17 +26,21 @@ export const DEFAULT_GEOJSON_LAYER_PROPS = {
   getElevation: 30
 }
 
-const debounce = (fn, time) => {
-  let timeout
+const debounce = <F extends (...args: any[]) => void>(fn: F, time: number): F => {
+  let timeout: NodeJS.Timeout
 
-  return function (...args) {
+  return function (this: any, ...args: any[]) {
     const functionCall = () => fn.apply(this, args)
 
     clearTimeout(timeout)
     timeout = setTimeout(functionCall, time)
-  }
+  } as F
 }
 
-export const handleViewStateChange = debounce(({ viewState }) => {
+const debouncedHandleViewStateChange = debounce(({ viewState }: HandleViewStateChange) => {
   setViewPoint(viewState)
 }, 10)
+
+export const handleViewStateChange = (info: MapViewState) => {
+  debouncedHandleViewStateChange({ viewState: info })
+}

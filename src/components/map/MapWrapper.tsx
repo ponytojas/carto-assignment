@@ -9,8 +9,9 @@ import {
   useControl
 } from 'react-map-gl/maplibre'
 
-import { MapboxOverlay as DeckOverlay } from '@deck.gl/mapbox'
+import { MapboxOverlay } from '@deck.gl/mapbox'
 import { DeckGL } from '@deck.gl/react'
+import { DeckProps } from 'deck.gl'
 
 interface MapWrapperProps {
   mapConfig: {
@@ -28,9 +29,10 @@ interface MapWrapperProps {
   layers: any[]
 }
 
-const DeckGLOverlay = (props): void => {
-  const overlay = useControl(() => new DeckOverlay(props))
-  overlay.setProps(props)
+function DeckGLOverlay (props: DeckProps): null {
+  // @ts-expect-error Type 'MapboxOverlay' does not satisfy the constraint 'IControl<MapInstance>'
+  const deck = useControl<MapboxOverlay>(() => new MapboxOverlay(props))
+  deck.setProps(props)
   return null
 }
 
@@ -63,8 +65,6 @@ export const MapWrapper: React.FC<MapWrapperProps> = ({
           <MapboxMap
             ref={mapRef}
             reuseMaps
-            useDevicePixels={false}
-            preventStyleDiffing
             mapboxAccessToken={mapboxToken}
             attributionControl={false}
             mapStyle={mapStyle}
@@ -78,6 +78,7 @@ export const MapWrapper: React.FC<MapWrapperProps> = ({
           <DeckGLOverlay
             getCursor={() => 'inherit'}
             layers={layers}
+            // @ts-expect-error Type 'MapboxOverlay' does not satisfy the constraint 'IControl<MapInstance>'
             interleaved
             onClick={onClick}
             onHover={onHover}

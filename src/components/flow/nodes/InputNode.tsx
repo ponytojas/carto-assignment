@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { bbox, centroid, polygon } from '@turf/turf'
-import { Handle, Position, useReactFlow } from '@xyflow/react'
+import { Handle, Node, Position, useReactFlow } from '@xyflow/react'
 import { Typography, IconButton } from '@mui/material'
 import { BaseNode } from './BaseNode'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { toast } from 'sonner'
-import useStore from '../../../utils/store'
+import useStore, { FlowState } from '../../../utils/store'
 import { useIsFirstRender } from '../../../hooks/useIsFirstRender'
 
 interface InputNodeProps {
@@ -20,11 +20,11 @@ interface InputNodeProps {
 const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
   const { updateNodeData } = useReactFlow()
   const isFirstRender = useIsFirstRender()
-  const setStoreData = useStore((state) => state.setStoreData)
-  const removeStoreData = useStore((state) => state.removeStoreData)
-  const setViewPoint = useStore((state) => state.setViewPoint)
-  const setNodes = useStore((state) => state.setNodes)
-  const nodes = useStore((state) => state.nodes)
+  const setStoreData = useStore((state: FlowState) => state.setStoreData)
+  const removeStoreData = useStore((state: FlowState) => state.removeStoreData)
+  const setViewPoint = useStore((state: FlowState) => state.setViewPoint)
+  const setNodes = useStore((state: FlowState) => state.setNodes)
+  const nodes = useStore((state: FlowState) => state.nodes)
 
   const { label, onDeleteNode, url: dataUrl = '' } = data
   const [hovered, setHovered] = useState(false)
@@ -33,7 +33,7 @@ const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
   const loading = useRef(false)
 
   useEffect(() => {
-    if (isFirstRender === false) return
+    if (!isFirstRender) return
     const { url: initialUrl } = data
     if (initialUrl !== undefined && initialUrl !== null) {
       setUrl(initialUrl)
@@ -69,25 +69,30 @@ const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
     }
   }, [id, setStoreData, setViewPoint])
 
-  const handleBlur = useCallback(async (event) => {
-    const inputUrl = event?.target?.value ?? null
+  const handleBlur = useCallback(async (event: Event) => {
+    const inputUrl = (event?.target as HTMLInputElement)?.value ?? null
     if (inputUrl === undefined || inputUrl === null || inputUrl === '') {
       setUrl('')
       removeStoreData(id)
       updateNodeData(id, { url: '' })
-      const _newNode = { ...nodes.find((node) => node.id === id) }
+      const _newNode = { ...nodes.find((node: Node) => node.id === id) }
       _newNode.data.url = ''
-      setNodes([...nodes.filter((node) => node.id !== id), { ..._newNode }])
-      return
+      setNodes([...nodes.filter((node: Node) => node.id !== id), { ..._newNode }])
     }
 
     setUrl(inputUrl)
-    await handleFetchGeoJSON(inputUrl)
-    updateNodeData(id, { url: inputUrl })
-    const _newNode = { ...nodes.find((node) => node.id === id) }
-    if (_newNode?.data === undefined || _newNode?.data === null) return
-    _newNode.data.url = inputUrl
-    setNodes([...nodes.filter((node) => node.id !== id), { ..._newNode }])
+    try {
+      await handleFetchGeoJSON(inputUrl)
+      updateNodeData(id, { url: inputUrl })
+      const _newNode = { ...nodes.find((node: Node) => node.id === id) }
+      if (_newNode?.data !== undefined && _newNode?.data !== null) {
+        _newNode.data.url = inputUrl
+        setNodes([...nodes.filter((node: Node) => node.id !== id), { ..._newNode }])
+      }
+    } catch (error) {
+      if (import.meta.env.MODE === 'development') console.error('Failed to fetch GeoJSON:', error)
+      toast.error('Failed to fetch GeoJSON')
+    }
   }, [id, updateNodeData, handleFetchGeoJSON, removeStoreData, setNodes, nodes])
 
   return (
@@ -102,6 +107,7 @@ const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
           onMouseEnter={() => setIconHovered(true)}
           onMouseLeave={() => setIconHovered(false)}
           size='small'
+          // @ts-expect-error The onDeleteNode expects a Node[] but for some reason it's not being recognized
           onClick={() => onDeleteNode([{ id, data }])}
           sx={{ position: 'absolute', top: -25, right: 0 }}
         >
@@ -115,6 +121,7 @@ const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
         data-testid='node-input'
         value={url}
         onChange={(e) => setUrl(e.target.value)}
+        // @ts-expect-error Property 'onBlur' does not expects async callback
         onBlur={handleBlur}
         placeholder='URL'
         style={{ fontSize: 10, width: '100%', padding: 2, margin: 0 }}

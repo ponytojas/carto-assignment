@@ -3,21 +3,20 @@ import {
   useState
 } from 'react'
 import { Feature } from 'geojson'
-import { PickingInfo } from 'deck.gl'
-
-interface TooltipContent {
-  object: { name: string, value: string }
-  x: number
-  y: number
-}
+import type { PickingInfo } from '@deck.gl/core'
 
 interface TooltipHook {
   tooltipInfo: string | null
   tooltipPosition: { x: number, y: number }
-  showTooltip: (info: TooltipContent) => void
+  showTooltip: (info: PickingInfo) => void
 }
 
-const createTooltipContent = (info: PickingInfo<Feature>): string[] => {
+interface TooltipState {
+  info: string | null
+  position: { x: number, y: number }
+}
+
+const createTooltipContent = (info: PickingInfo): string => {
   const { properties } = info.object
   const lines: string[] = []
   for (const key in properties) {
@@ -28,9 +27,9 @@ const createTooltipContent = (info: PickingInfo<Feature>): string[] => {
 }
 
 const useTooltip = (): TooltipHook => {
-  const [tooltip, setTooltip] = useState({ info: null, position: { x: 0, y: 0 } })
+  const [tooltip, setTooltip] = useState<TooltipState>({ info: null, position: { x: 0, y: 0 } })
 
-  const showTooltip = useCallback((info) => {
+  const showTooltip = useCallback((info: PickingInfo) => {
     const { object } = info ?? null
     if (object === null || object === undefined) {
       setTooltip({ info: null, position: { x: 0, y: 0 } })

@@ -27,6 +27,7 @@ const OutputNode = ({ id, data }: OutputNodeProps): JSX.Element => {
           onMouseEnter={() => setIconHovered(true)}
           onMouseLeave={() => setIconHovered(false)}
           size='small'
+          // @ts-expect-error The onDeleteNode expects a Node[] but for some reason it's not being recognized
           onClick={() => onDeleteNode([{ id, data }])}
           style={{ position: 'absolute', top: -25, right: 0 }}
         >

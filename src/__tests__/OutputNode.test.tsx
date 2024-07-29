@@ -3,8 +3,14 @@ import { render, screen, fireEvent, cleanup } from '@testing-library/react'
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import OutputNode from '../components/flow/nodes/OutputNode'
 
+interface HandleProps {
+  type: string
+  position: string
+  style: React.CSSProperties
+}
+
 vi.mock('@xyflow/react', () => ({
-  Handle: ({ type, position, style }) => <div data-testid='handle' data-type={type} data-position={position} style={style} />,
+  Handle: ({ type, position, style }: HandleProps) => <div data-testid='handle' data-type={type} data-position={position} style={style} />,
   Position: {
     Left: 'left'
   }
@@ -64,12 +70,12 @@ describe('OutputNode', () => {
       fireEvent.mouseEnter(baseNode)
 
       const iconButton = screen.getByRole('button')
-      expect(iconButton.firstChild.classList).toContain('MuiSvgIcon-colorAction')
-      expect(iconButton.firstChild.classList).not.toContain('MuiSvgIcon-colorError')
+      expect((iconButton?.firstChild as Element)?.classList).toContain('MuiSvgIcon-colorAction')
+      expect((iconButton?.firstChild as Element)?.classList).not.toContain('MuiSvgIcon-colorError')
       fireEvent.mouseEnter(iconButton)
 
-      expect(iconButton.firstChild.classList).not.toContain('MuiSvgIcon-colorAction')
-      expect(iconButton.firstChild.classList).toContain('MuiSvgIcon-colorError')
+      expect((iconButton?.firstChild as Element)?.classList).not.toContain('MuiSvgIcon-colorAction')
+      expect((iconButton?.firstChild as Element)?.classList).toContain('MuiSvgIcon-colorError')
     }
   })
 })

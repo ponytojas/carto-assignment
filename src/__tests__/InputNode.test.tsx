@@ -4,6 +4,12 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import { toast } from 'sonner'
 import InputNode from '../components/flow/nodes/InputNode'
 
+interface HandleProps {
+  type: string
+  position: string
+  style: React.CSSProperties
+}
+
 vi.mock('sonner', () => ({
   toast: {
     success: vi.fn(),
@@ -25,7 +31,7 @@ const mockUseReactFlow = {
 
 vi.mock('@xyflow/react', () => ({
   useReactFlow: () => mockUseReactFlow,
-  Handle: ({ type, position, style }) => <div data-testid='handle' data-type={type} data-position={position} style={style} />,
+  Handle: ({ type, position, style }: HandleProps) => <div data-testid='handle' data-type={type} data-position={position} style={style} />,
   Position: {
     Right: 'right'
   }

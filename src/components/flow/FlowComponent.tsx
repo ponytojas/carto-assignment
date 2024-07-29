@@ -41,7 +41,7 @@ export function FlowComponent (): JSX.Element {
       onDragOver={onDragOver}
     >
       <Box sx={{ position: 'absolute', bottom: 20, right: 10, zIndex: 100, display: 'flex' }}>
-        <ButtonGroup variant='outlined' size='small' color='secondary' aria-label='Basic button group'>
+        <ButtonGroup variant='outlined' size='small' color='secondary' aria-label='Save and load state button group'>
           <Tooltip arrow title='Save current flow'>
             <Button onClick={saveFlow}>
               <SaveOutlined fontSize='small' sx={{ marginBottom: '1px', marginRight: 1 }} />

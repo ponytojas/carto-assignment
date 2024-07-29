@@ -26,6 +26,7 @@ export default function SidebarItem ({ type, label }): React.FC<SidebarItemProps
         marginRight: 10,
         cursor: 'move'
       }}
+      data-testid={`sidebar-item-${type as string}`}
     >
       <Typography>{label}</Typography>
     </Box>

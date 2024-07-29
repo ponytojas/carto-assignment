@@ -46,14 +46,14 @@ export function Flow (): JSX.Element {
         >
           {!open && (
             <Box sx={{ position: 'absolute', top: 8, left: 8, zIndex: 100 }}>
-              <IconButton onClick={() => setOpen(true)}>
+              <IconButton onClick={() => setOpen(true)} data-testid='menu-icon'>
                 <MenuIcon />
               </IconButton>
             </Box>
           )}
 
           <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 100 }}>
-            <Button variant='contained' onClick={handleNavigate}>
+            <Button variant='contained' onClick={handleNavigate} data-testid='map-icon'>
               <Typography variant='body2'>Map</Typography>
               <ArrowForwardIosIcon fontSize='small' sx={{ marginLeft: 1 }} />
             </Button>

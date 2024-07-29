@@ -39,17 +39,18 @@ export function FlowComponent (): JSX.Element {
       style={{ height, width: '100%' }}
       onDrop={onDrop}
       onDragOver={onDragOver}
+      data-testid='flow-main'
     >
       <Box sx={{ position: 'absolute', bottom: 20, right: 10, zIndex: 100, display: 'flex' }}>
         <ButtonGroup variant='outlined' size='small' color='secondary' aria-label='Save and load state button group'>
           <Tooltip arrow title='Save current flow'>
-            <Button onClick={saveFlow}>
+            <Button onClick={saveFlow} data-testid='save-state-button'>
               <SaveOutlined fontSize='small' sx={{ marginBottom: '1px', marginRight: 1 }} />
               Save
             </Button>
           </Tooltip>
           <Tooltip arrow title='Load saved flow'>
-            <Button onClick={loadFlow}>
+            <Button onClick={loadFlow} data-testid='load-state-button'>
               <FileUpload fontSize='small' sx={{ marginRight: 1 }} />
               Load
             </Button>

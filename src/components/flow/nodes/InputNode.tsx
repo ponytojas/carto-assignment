@@ -77,16 +77,18 @@ const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
 
   return (
     <BaseNode
+      data-testid='input-node'
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {hovered && (
         <IconButton
+          data-testid='delete-node'
           onMouseEnter={() => setIconHovered(true)}
           onMouseLeave={() => setIconHovered(false)}
           size='small'
           onClick={() => onDeleteNode([{ id, data }])}
-          style={{ position: 'absolute', top: -25, right: 0 }}
+          sx={{ position: 'absolute', top: -25, right: 0 }}
         >
           <DeleteIcon
             fontSize='small' color={iconHovered ? 'error' : 'action'}
@@ -94,15 +96,15 @@ const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
         </IconButton>
       )}
       <Typography fontSize={10}>{label}</Typography>
-      <TextField
+      <input
+        data-testid='node-input'
         value={url}
         onChange={(e) => setUrl(e.target.value)}
         onBlur={handleBlur}
         placeholder='URL'
-        size='small'
-        sx={{ fontSize: 5, width: '100%', padding: 0, margin: 0 }}
+        style={{ fontSize: 10, width: '100%', padding: 2, margin: 0 }}
       />
-      <Handle type='source' position={Position.Right} style={{ background: '#555' }} />
+      <Handle type='source' position={Position.Right} style={{ background: '#555' }} data-testid='node-handler-source' />
     </BaseNode>
   )
 }

@@ -35,9 +35,10 @@ export default function PersistentDrawer ({ open, setOpen, children }: Persisten
       variant='persistent'
       anchor='left'
       open={open}
+      data-testid='drawer'
     >
       <DrawerHeader>
-        <IconButton onClick={handleDrawerClose}>
+        <IconButton onClick={handleDrawerClose} data-testid='close-menu-icon'>
           <ChevronLeftIcon />
         </IconButton>
       </DrawerHeader>

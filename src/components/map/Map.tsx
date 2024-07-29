@@ -84,12 +84,12 @@ export function Map (): JSX.Element {
   return (
     <>
       <Box sx={{ position: 'absolute', top: 8, right: 8, zIndex: 100 }}>
-        <Button variant='contained' onClick={handleNavigate}>
+        <Button variant='contained' onClick={handleNavigate} data-testid='flow-icon'>
           <Typography variant='body2'>Back</Typography>
           <ArrowForwardIosIcon fontSize='small' sx={{ marginLeft: 1 }} />
         </Button>
       </Box>
-      <Box sx={{ cursor: 'pointer', position: 'relative', width: '100%', height }}>
+      <Box sx={{ cursor: 'pointer', position: 'relative', width: '100%', height }} data-testid='deckgl-map'>
         <MapWrapper mapConfig={mapConfig} deckGlConfig={deckGlConfig} layers={layers}>
           <CustomTooltip content={tooltipInfo} position={tooltipPosition} />
         </MapWrapper>

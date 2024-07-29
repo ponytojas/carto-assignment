@@ -1,30 +1,65 @@
-# React + TypeScript + Vite
+# Carto Front-end Engineer assignment
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## How to run?
 
-Currently, two official plugins are available:
+Install dependencies:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json', './tsconfig.app.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+```bash
+npm install # or any other package manager
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Run the project:
+
+```bash
+npm run dev
+```
+
+The project use vite as a bundler, the default port is 5173,
+so you can access the project at `http://localhost:5173`.
+
+## Dependencies
+
+For the project, the requested dependencies where used (ReactFlow and Deck.GL), for the UI, MUI was used but with the default theme.
+
+For sharing state, zustand was used, as it is a simple and easy to use state management library.
+
+Other dependencies were used like sonner (toast notifications), react-router-dom (routing), and turf for the optional task.
+
+As development dependencies, test libraries were used (playwright, vitest, testing-library/react), and eslint with ts-standard for linting.
+
+
+## Tests
+
+For the project a few unitary test were written for components, and two e2e tests were written for the main functionalities of the app. The e2e tests use playwright, and they are written in typescript.
+
+The unitary tests can be run with:
+
+```bash
+npm run test
+```
+
+And the e2e tests can be run with:
+
+```bash
+npm run test:e2e
+```
+
+The main test should be considered the e2e tests, as they test the main functionalities of the app.
+
+## Map wrapper
+
+The Deck.GL map was handle using a wrapper component. If a Mapbox token is provided in a `.env` file, as `VITE_MAPBOX_TOKEN`, the wrapper will be loaded using the Mapbox provider, otherwise, it will use Maplibre with the DeckglOverlay.
+
+The theme could be also customized wit the env variables `VITE_MAP_THEME` but by default it is set to be used with the CARTO voyager theme.
+
+## Handle viewstate changes
+
+As the viewstate in the map will be changed by the user interaction, the state is saved in zustand to persist between routing changes. This state is saved with a debounce of 10ms to avoid saving the state too many times.
+
+
+## Possible improvements
+
+- More tests could be added, specially for the components.
+- The UI could be improved, it was kept simple to looks like the provided design.
+- The data fetching could be improved, avoiding to refetch the data when the user changes the view.
+- The map could be improved, adding more functionalities like zoom.

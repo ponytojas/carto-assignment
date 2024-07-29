@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useReactFlow, Background, Controls, ReactFlow } from '@xyflow/react'
 import { Button, Box, ButtonGroup, Tooltip } from '@mui/material'
 import { useFlow } from '../../hooks/useFlow'
@@ -6,10 +6,12 @@ import InputNode from './nodes/InputNode'
 import OutputNode from './nodes/OutputNode'
 import { NodeType } from '../../enums/flow'
 import { FileUpload, SaveOutlined } from '@mui/icons-material'
+import IntersectionNode from './nodes/IntersectionNode'
 
 const nodeTypes = {
   [NodeType.SOURCE]: InputNode,
-  [NodeType.LAYER]: OutputNode
+  [NodeType.LAYER]: OutputNode,
+  [NodeType.INTERSECTION]: IntersectionNode
 }
 
 export function FlowComponent (): JSX.Element {

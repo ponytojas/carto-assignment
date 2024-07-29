@@ -17,7 +17,9 @@ export default function SidebarItem ({ type, label }): React.FC<SidebarItemProps
       onDragStart={handleDragStart}
       draggable
       sx={{
-        padding: 10,
+        paddingTop: 10,
+        paddingBottom: 10,
+        textAlign: 'center',
         border: '1px solid black',
         borderRadius: 5,
         marginTop: 5,

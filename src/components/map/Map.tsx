@@ -70,6 +70,8 @@ export function Map (): JSX.Element {
     })
 
     const _layers = layerSourceTuples.map((tuple) => {
+      const _keys = Object.keys(storeData)
+      if (_keys.length === 0 || !_keys.includes(tuple.source)) return null
       const { data } = storeData[tuple.source]
       return new GeoJsonLayer({
         ...DEFAULT_GEOJSON_LAYER_PROPS,

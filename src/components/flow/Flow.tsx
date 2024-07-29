@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Box, Button, CssBaseline, IconButton, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import PersistentDrawer from '../common/Drawer'
@@ -14,12 +14,17 @@ import useStore from '../../utils/store'
 export function Flow (): JSX.Element {
   const [open, setOpen] = useState(false)
   const navigateTo = useNavigate()
-  const { saveFlowState, loadFlowState, setNodes, setEdges, nodes, edges } = useStore()
+  const saveFlowState = useStore((state) => state.saveFlowState)
+  const loadFlowState = useStore((state) => state.loadFlowState)
+  const setNodes = useStore((state) => state.setNodes)
+  const setEdges = useStore((state) => state.setEdges)
+  const nodes = useStore((state) => state.nodes)
+  const edges = useStore((state) => state.edges)
 
-  const handleNavigate = (): void => {
+  const handleNavigate = useCallback(() => {
     saveFlowState(nodes, edges)
     navigateTo('/map')
-  }
+  }, [nodes, edges, saveFlowState, navigateTo])
 
   useEffect(() => {
     const { nodes: savedNodes, edges: savedEdges } = loadFlowState()
@@ -34,6 +39,7 @@ export function Flow (): JSX.Element {
         <PersistentDrawer open={open} setOpen={setOpen}>
           <SidebarItem type={NodeType.SOURCE} label={NodeLabel.SOURCE} />
           <SidebarItem type={NodeType.LAYER} label={NodeLabel.LAYER} />
+          <SidebarItem type={NodeType.INTERSECTION} label={NodeLabel.INTERSECTION} />
         </PersistentDrawer>
         <Box
           component='main'

@@ -35,9 +35,16 @@ export const useFlow = (screenToFlowPosition): useFlowReturn => {
     (params: Edge | Connection) => {
       const existingSourceConnection = edges.some(edge => edge.source === params.source)
       const existingTargetConnection = edges.some(edge => edge.target === params.target)
+      const targetIsIntersection = params.target.includes('intersection')
 
-      if (existingSourceConnection || existingTargetConnection) {
+      if ((existingSourceConnection || existingTargetConnection) && !targetIsIntersection) {
         toast.warning('Each source or layer node can only have one connection.')
+        return
+      }
+
+      const amountOfConnections = edges.filter(edge => edge.target === params.target).length
+      if (amountOfConnections === 2 && targetIsIntersection) {
+        toast.warning('Each source node can only have two connections.')
         return
       }
 

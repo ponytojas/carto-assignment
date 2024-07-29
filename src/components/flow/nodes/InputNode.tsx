@@ -21,7 +21,10 @@ const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
   const { updateNodeData } = useReactFlow()
   const isFirstRender = useIsFirstRender()
   const setStoreData = useStore((state) => state.setStoreData)
+  const removeStoreData = useStore((state) => state.removeStoreData)
   const setViewPoint = useStore((state) => state.setViewPoint)
+  const setNodes = useStore((state) => state.setNodes)
+  const nodes = useStore((state) => state.nodes)
 
   const { label, onDeleteNode, url: dataUrl = '' } = data
   const [hovered, setHovered] = useState(false)
@@ -68,12 +71,19 @@ const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
 
   const handleBlur = useCallback((event) => {
     const inputUrl = event?.target?.value ?? null
-    if (inputUrl === undefined || inputUrl === null) return
+    if (inputUrl === undefined || inputUrl === null || inputUrl === '') {
+      setUrl('')
+      removeStoreData(id)
+      updateNodeData(id, { url: '' })
+      setNodes([...nodes.filter((node) => node.id !== id), { ...nodes.find((node) => node.id === id), data: { ...nodes.find((node) => node.id === id).data, url: '' } }])
+      return
+    }
 
     setUrl(inputUrl)
     void handleFetchGeoJSON(inputUrl)
     updateNodeData(id, { url: inputUrl })
-  }, [id, updateNodeData, handleFetchGeoJSON])
+    setNodes([...nodes.filter((node) => node.id !== id), { ...nodes.find((node) => node.id === id), data: { ...nodes.find((node) => node.id === id).data, url: inputUrl } }])
+  }, [id, updateNodeData, handleFetchGeoJSON, removeStoreData, setNodes, nodes])
 
   return (
     <BaseNode

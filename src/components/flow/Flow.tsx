@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Box, Button, CssBaseline, IconButton, Typography } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import TemporaryDrawer from '../common/Drawer'
+import PersistentDrawer from '../common/Drawer'
 import { ReactFlowProvider } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import SidebarItem from './SidebarItem'
@@ -31,10 +31,10 @@ export function Flow (): JSX.Element {
     <>
       <CssBaseline />
       <Box sx={{ display: 'flex', width: '100%', height: '100%' }}>
-        <TemporaryDrawer open={open} setOpen={setOpen}>
+        <PersistentDrawer open={open} setOpen={setOpen}>
           <SidebarItem type={NodeType.SOURCE} label={NodeLabel.SOURCE} />
           <SidebarItem type={NodeType.LAYER} label={NodeLabel.LAYER} />
-        </TemporaryDrawer>
+        </PersistentDrawer>
         <Box
           component='main'
           sx={{

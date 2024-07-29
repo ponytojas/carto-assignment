@@ -75,14 +75,18 @@ const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
       setUrl('')
       removeStoreData(id)
       updateNodeData(id, { url: '' })
-      setNodes([...nodes.filter((node) => node.id !== id), { ...nodes.find((node) => node.id === id), data: { ...nodes.find((node) => node.id === id).data, url: '' } }])
+      const _newNode = { ...nodes.find((node) => node.id === id) }
+      _newNode.data.url = ''
+      setNodes([...nodes.filter((node) => node.id !== id), { ..._newNode }])
       return
     }
 
     setUrl(inputUrl)
     void handleFetchGeoJSON(inputUrl)
     updateNodeData(id, { url: inputUrl })
-    setNodes([...nodes.filter((node) => node.id !== id), { ...nodes.find((node) => node.id === id), data: { ...nodes.find((node) => node.id === id).data, url: inputUrl } }])
+    const _newNode = { ...nodes.find((node) => node.id === id) }
+    _newNode.data.url = inputUrl
+    setNodes([...nodes.filter((node) => node.id !== id), { ..._newNode }])
   }, [id, updateNodeData, handleFetchGeoJSON, removeStoreData, setNodes, nodes])
 
   return (
@@ -114,7 +118,7 @@ const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
         placeholder='URL'
         style={{ fontSize: 10, width: '100%', padding: 2, margin: 0 }}
       />
-      <Handle type='source' position={Position.Right} style={{ background: '#555' }} data-testid='node-handler-source' />
+      <Handle type='source' position={Position.Right} style={{ background: '#555' }} data-testid='node-handler-source' id={`${id}-output-1`} />
     </BaseNode>
   )
 }

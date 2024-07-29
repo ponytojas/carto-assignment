@@ -98,7 +98,9 @@ const IntersectionNode = ({ id, data }: IntersectionNodeProps): JSX.Element => {
   }, [inputsId, setViewPoint, updateNodeData, storeData, updateStoreData, id])
 
   useEffect(() => {
-    const inputs = edges.filter(e => e.target === id).map(e => e.source)
+    const input1 = edges.find(e => e.target === id && e.targetHandle === `${id}-input-1`)?.source
+    const input2 = edges.find(e => e.target === id && e.targetHandle === `${id}-input-2`)?.source
+    const inputs = [input1, input2].filter(Boolean) // Filter out undefined values
     if (inputs.length === 2 && JSON.stringify(inputs) !== JSON.stringify(inputsId)) {
       setInputsId(inputs)
     }
@@ -125,9 +127,9 @@ const IntersectionNode = ({ id, data }: IntersectionNodeProps): JSX.Element => {
         </IconButton>
       )}
       <Typography fontSize={10}>{label}</Typography>
-      <Handle type='target' position={Position.Left} style={{ background: '#555', top: '30%' }} data-testid='node-handler-input-1' />
-      <Handle type='target' position={Position.Left} style={{ background: '#555', top: '70%' }} data-testid='node-handler-input-2' />
-      <Handle type='source' position={Position.Right} style={{ background: '#555' }} data-testid='node-handler-source' />
+      <Handle type='target' position={Position.Left} style={{ background: '#555', top: '30%' }} data-testid='node-handler-input-1' id={`${id}-input-1`} />
+      <Handle type='target' position={Position.Left} style={{ background: '#555', top: '70%' }} data-testid='node-handler-input-2' id={`${id}-input-2`} />
+      <Handle type='source' position={Position.Right} style={{ background: '#555' }} data-testid='node-handler-source' id={`${id}-output-1`} />
     </BaseNode>
   )
 }

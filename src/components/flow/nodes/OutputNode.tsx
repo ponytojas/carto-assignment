@@ -36,7 +36,7 @@ const OutputNode = ({ id, data }: OutputNodeProps): JSX.Element => {
         </IconButton>
       )}
       <Typography fontSize={10}>{label}</Typography>
-      <Handle type='target' position={Position.Left} style={{ background: '#555' }} data-testid='node-handler-target' />
+      <Handle type='target' position={Position.Left} style={{ background: '#555' }} data-testid='node-handler-target' id={`${id}-input-1`} />
     </BaseNode>
   )
 }

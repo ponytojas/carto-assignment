@@ -69,7 +69,7 @@ const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
     }
   }, [id, setStoreData, setViewPoint])
 
-  const handleBlur = useCallback((event) => {
+  const handleBlur = useCallback(async (event) => {
     const inputUrl = event?.target?.value ?? null
     if (inputUrl === undefined || inputUrl === null || inputUrl === '') {
       setUrl('')
@@ -82,9 +82,10 @@ const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
     }
 
     setUrl(inputUrl)
-    void handleFetchGeoJSON(inputUrl)
+    await handleFetchGeoJSON(inputUrl)
     updateNodeData(id, { url: inputUrl })
     const _newNode = { ...nodes.find((node) => node.id === id) }
+    if (_newNode?.data === undefined || _newNode?.data === null) return
     _newNode.data.url = inputUrl
     setNodes([...nodes.filter((node) => node.id !== id), { ..._newNode }])
   }, [id, updateNodeData, handleFetchGeoJSON, removeStoreData, setNodes, nodes])

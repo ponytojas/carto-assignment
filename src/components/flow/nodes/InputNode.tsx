@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback, memo, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { bbox, centroid, polygon } from '@turf/turf'
 import { Handle, Position, useReactFlow } from '@xyflow/react'
-import { Typography, IconButton, TextField } from '@mui/material'
+import { Typography, IconButton } from '@mui/material'
 import { BaseNode } from './BaseNode'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { toast } from 'sonner'
@@ -20,7 +20,6 @@ interface InputNodeProps {
 const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
   const { updateNodeData } = useReactFlow()
   const isFirstRender = useIsFirstRender()
-  const storeData = useStore((state) => state.storeData)
   const setStoreData = useStore((state) => state.setStoreData)
   const setViewPoint = useStore((state) => state.setViewPoint)
 

@@ -107,4 +107,4 @@ const InputNode = ({ id, data }: InputNodeProps): JSX.Element => {
   )
 }
 
-export default memo(InputNode)
+export default InputNode

@@ -12,8 +12,31 @@ import useTooltip from '../../hooks/useTooltip'
 import { CustomTooltip } from './utils/CustomTooltip'
 import { Edge, Node } from '@xyflow/react'
 
+interface ViewStateChange {
+  interactionState: {
+    isDragging: boolean
+    isPanning: boolean
+    isRotating: boolean
+    isZooming: boolean
+    startPanLngLat: [number, number]
+    startZoomLngLat: [number, number]
+    startZoom: number
+    startBearing: number
+    startPitch: number
+    isZoomingOut: boolean
+    isZoomingIn: boolean
+    isMoving: boolean
+    isFlying: boolean
+    isUserInteracting: boolean
+    isHovering: boolean
+  }
+  oldViewState: MapViewState
+  viewState: MapViewState
+  viewId: string
+}
+
 export function Map (): JSX.Element {
-  const viewPoint = useStore((state: FlowState) => state.viewPoint) ?? { longitude: -73.9853, latitude: 40.7466, zoom: 12 }
+  const viewPoint: MapViewState = useStore((state: FlowState) => state.viewPoint) ?? { longitude: -73.9853, latitude: 40.7466, zoom: 12 }
   const storeData = useStore((state: FlowState) => state.storeData)
   const nodes: Node[] = useStore((state: FlowState) => state.nodes)
   const edges: Edge[] = useStore((state: FlowState) => state.edges)
@@ -43,7 +66,7 @@ export function Map (): JSX.Element {
   const deckGlConfig = {
     initialViewState: { ...viewPoint },
     onHover,
-    onViewStateChange: (info: MapViewState) => handleViewStateChange(info)
+    onViewStateChange: ({ viewState }: ViewStateChange) => handleViewStateChange(viewState)
   }
 
   const handleNavigate = (): void => {

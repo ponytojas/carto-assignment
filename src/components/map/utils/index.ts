@@ -41,6 +41,7 @@ const debouncedHandleViewStateChange = debounce(({ viewState }: HandleViewStateC
   setViewPoint(viewState)
 }, 10)
 
-export const handleViewStateChange = (info: MapViewState) => {
-  debouncedHandleViewStateChange({ viewState: info })
+export const handleViewStateChange = (viewState: MapViewState): void => {
+  if (viewState === null || viewState === undefined) return
+  debouncedHandleViewStateChange({ viewState })
 }

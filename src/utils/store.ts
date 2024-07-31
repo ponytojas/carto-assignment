@@ -1,20 +1,20 @@
 import { create } from 'zustand'
 import { Node, Edge } from '@xyflow/react'
 import { FeatureCollection } from 'geojson'
-import { viewPoint } from '../components/map/types'
+import { MapViewState } from 'deck.gl'
 
 export interface FlowState {
   nodes: Node[]
   edges: Edge[]
   storeData: Record<string, FeatureCollection>
-  viewPoint: viewPoint | null
+  viewPoint: MapViewState | null
   setNodes: (nodes: Node[]) => void
   setEdges: (edges: Edge[]) => void
   setStoreData: (newData: Record<string, FeatureCollection>) => void
   removeStoreData: (id: string) => void // Add this line
   saveFlowState: (nodes: Node[], edges: Edge[]) => void
   loadFlowState: () => { nodes: Node[], edges: Edge[] }
-  setViewPoint: (viewPoint: viewPoint) => void
+  setViewPoint: (viewPoint: MapViewState) => void
 }
 // @ts-expect-error This is a workaround for a TypeScript error of useStore implicitly having an any type
 const useStore = create<FlowState>()((set) => ({
